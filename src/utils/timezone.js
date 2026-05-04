@@ -16,7 +16,16 @@ export function getServerStatus(tz, now) {
   const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
   const isLowPop = hour >= LOW_POP_START && hour < LOW_POP_END
 
-  return { timeStr, isLowPop, hour, minute }
+  const totalMin = hour * 60 + minute
+  let countdownMin
+  if (isLowPop) {
+    countdownMin = LOW_POP_END * 60 - totalMin
+  } else {
+    countdownMin = LOW_POP_START * 60 - totalMin
+    if (countdownMin <= 0) countdownMin += 24 * 60
+  }
+
+  return { timeStr, isLowPop, hour, minute, countdownMin }
 }
 
 export function getCountdown(hour, minute) {

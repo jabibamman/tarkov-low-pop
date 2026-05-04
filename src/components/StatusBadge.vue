@@ -6,13 +6,10 @@ defineProps({
 
 <template>
   <span
-    v-if="isLowPop"
-    class="badge-low-pop"
-    aria-label="Low population server"
-  >💤 LOW POP</span>
-  <span
-    v-else
-    class="badge-normal"
-    aria-label="Normal population"
-  >─</span>
+    class="status-badge"
+    :class="isLowPop ? 'status-badge--low' : 'status-badge--active'"
+  >
+    <span class="status-badge__dot" aria-hidden="true"></span>
+    <span class="status-badge__label">{{ isLowPop ? 'LOW POP' : 'ACTIVE' }}</span>
+  </span>
 </template>

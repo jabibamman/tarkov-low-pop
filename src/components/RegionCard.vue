@@ -8,10 +8,11 @@ const props = defineProps({
 })
 
 const visibleServers = computed(() => {
-  if (props.viewMode === 'lowpop') {
-    return props.region.servers.filter(s => s.status.isLowPop)
-  }
-  return props.region.servers
+  let list = props.region.servers
+  if (props.viewMode === 'lowpop') list = list.filter(s => s.status.isLowPop)
+  return [...list].sort((a, b) =>
+    a.status.isLowPop === b.status.isLowPop ? 0 : a.status.isLowPop ? -1 : 1
+  )
 })
 
 const lowPopInRegion = computed(() =>
@@ -24,11 +25,12 @@ const lowPopInRegion = computed(() =>
     <header class="region-header">
       <span class="region-header__diamond" aria-hidden="true">◆</span>
       <span class="region-header__title">{{ region.region }}</span>
+      <span class="region-header__code">[{{ region.code }}]</span>
       <span
         class="region-header__count"
         :class="{ 'region-header__count--active': lowPopInRegion > 0 }"
       >
-        {{ lowPopInRegion }} LOW
+        {{ lowPopInRegion }} <span class="region-header__count-label">LOW</span>
       </span>
     </header>
     <ul class="server-list">

@@ -2,6 +2,7 @@
 const props = defineProps({
   regions: { type: Array, required: true },
   active: { type: Array, required: true },
+  lowPopByCode: { type: Object, default: () => ({}) },
 })
 
 const emit = defineEmits(['update:active'])
@@ -12,14 +13,8 @@ function toggle(code) {
     : [...props.active, code]
   emit('update:active', next)
 }
-
-function selectAll() {
-  emit('update:active', props.regions.map(r => r.code))
-}
-
-function selectNone() {
-  emit('update:active', [])
-}
+function selectAll() { emit('update:active', props.regions.map(r => r.code)) }
+function selectNone() { emit('update:active', []) }
 </script>
 
 <template>
@@ -30,12 +25,15 @@ function selectNone() {
         :key="region.code"
         class="filter-btn"
         :class="{ active: active.includes(region.code) }"
-        @click="toggle(region.code)"
-        :aria-label="`Toggle region ${region.code}`"
         :aria-pressed="active.includes(region.code)"
+        :aria-label="`Toggle region ${region.code}`"
+        @click="toggle(region.code)"
       >
-        {{ region.code }}
-        <span v-if="active.includes(region.code)" class="filter-btn__check" aria-hidden="true">✓</span>
+        <span class="filter-btn__code">{{ region.code }}</span>
+        <span
+          class="filter-btn__count"
+          :class="{ 'filter-btn__count--active': (lowPopByCode[region.code] || 0) > 0 }"
+        >{{ lowPopByCode[region.code] || 0 }}</span>
       </button>
 
       <span class="filter-bar__sep" aria-hidden="true"></span>
